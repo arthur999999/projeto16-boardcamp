@@ -1,11 +1,14 @@
-import pg from "pg";
+import pkg from "pg";
+import dotenv from "dotenv";
 
-const { Pool } = pg;
+dotenv.config()
 
-const connection = new Pool({
+const { Pool } = pkg;
+
+export const connection = new Pool({
     connectionString: process.env.DATABASE_URL,
-
+    sll: true,
   });
 
-export default connection
+
 
