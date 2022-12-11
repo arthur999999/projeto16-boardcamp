@@ -29,6 +29,15 @@ export async function CreateCategori (req, res) {
         
         
     } catch (error) {
-        res.send(error.message)
+        res.status(400).send(error.message)
+    }
+}
+
+export async function GetCategories (req, res) {
+    try {
+        const {rows} = await connection.query("SELECT * FROM categories;")
+        res.send(rows)
+    } catch (error) {
+        res.status(400).send(error.message)
     }
 }
