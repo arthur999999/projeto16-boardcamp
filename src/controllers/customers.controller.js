@@ -100,3 +100,47 @@ export async function  CustomerGetId(req, res){
     res.sendStatus(404)
     
 }
+
+export async function CustomersPut (req, res) {
+    const id = req.params.id
+
+    const {name, phone, cpf, birthday} = req.body
+
+    const birthdayCorrect = birthday.split('-')
+
+    const birthdayReal = [birthdayCorrect[1], birthdayCorrect[2], birthdayCorrect[0] ].join('-')
+
+    const customerObjetc = {
+        name: name,
+        phone: phone,
+        cpf: cpf,
+        birthday: birthdayReal
+    }
+
+    const validation = customerSchema.validate(customerObjetc, {abortEarly: false})
+
+    if(validation.error){
+        res.status(400).send(validation.error.message)
+        return
+    }
+
+    try {
+        
+        const cpfSame = await connection.query(`SELECT * FROM customers WHERE cpf = $1`, [cpf])
+        if(cpfSame.rows[0]){
+            if(cpfSame.rows[0].id != id){
+                res.sendStatus(409)
+                return
+            }
+        }
+        
+        
+        await connection.query(`UPDATE customers SET name = $1, phone = $2, cpf = $3, birthday = $4 WHERE id = $5 ;`, [name, phone, cpf, birthday, id])
+        res.sendStatus(200)
+
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+
+    
+}
