@@ -4,6 +4,7 @@ import categorieRouter from "./routes/categories.routes.js";
 import gamesRouter from "./routes/games.routes.js";
 import cors from "cors";
 import customersRouter from "./routes/customers.routes.js";
+import rentalsRouter from "./routes/rentals.routes.js";
 
 dotenv.config()
 
@@ -14,6 +15,7 @@ app.use(express.json())
 app.use(categorieRouter)
 app.use(gamesRouter)
 app.use(customersRouter)
+app.use(rentalsRouter)
 
 app.listen(4000, ()=> {console.log('rodando')})
 
