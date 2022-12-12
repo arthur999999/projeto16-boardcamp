@@ -3,7 +3,7 @@ import { CreateCategori, GetCategories } from "../controllers/categories.control
 
 const categorieRouter = Router()
 
-categorieRouter.post("/categories", CreateCategori)
-categorieRouter.get("/categories", GetCategories)
+categorieRouter.post('/categories', CreateCategori)
+categorieRouter.get('/categories', GetCategories)
 
 export default categorieRouter
