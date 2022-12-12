@@ -57,7 +57,20 @@ export async function CustomerGet(req, res) {
 
     try {
 
+
+
         const {rows} = await connection.query(`SELECT * FROM customers`)
+        if(cpf){
+            const cpfList = rows.filter((m)=> {for(let i = 0; i < cpf.length; i++){
+                if(m.cpf[i] != cpf[i]){
+                    return false
+                }
+            }
+            return true
+        })
+            res.send(cpfList)
+            return
+        }
         res.send(rows)
     } catch (error) {
         res.send(error.message)
