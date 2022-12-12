@@ -2,6 +2,9 @@ import {connection} from "../database/db.js";
 import joi from "joi";
 import dayjs from "dayjs";
 
+
+
+
 const rentalSchema = joi.object({
     customerId: joi.number().required(),
     gameId: joi.number().required(),
@@ -68,4 +71,36 @@ export async function CreateRental (req, res) {
     }
 
     
+}
+
+export async function ReturnRental (req, res) {
+
+    const id = req.params.id
+
+    try {
+        const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+
+        if(!rental.rows[0]){
+            res.sendStatus(404)
+            return
+        }
+
+        if(rental.rows[0].returnDate){
+            res.sendStatus(400)
+            return
+        }
+
+        const dateNow = `${dayjs().year()}-${dayjs().month()+ 1}-${dayjs().date()}`
+
+        await connection.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2`, [dateNow, id])
+
+        res.sendStatus(200)
+
+
+
+
+       
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
 }
