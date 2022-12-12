@@ -17,5 +17,5 @@ app.use(gamesRouter)
 app.use(customersRouter)
 app.use(rentalsRouter)
 
-app.listen(4000, ()=> {console.log('rodando')})
+app.listen(process.env.PORT, ()=> {console.log('rodando')})
 

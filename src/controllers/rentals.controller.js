@@ -11,6 +11,35 @@ const rentalSchema = joi.object({
     daysRented: joi.number().min(1).required()
 })
 
+export async function GetRentals (req, res) {
+    const game = req.query.gameId
+    const id = req.query.customerId
+
+    try {
+        
+        if(game){
+            const gameList = await connection.query(`SELECT * FROM rentals WHERE "gameId" = $1`, [game])
+            res.send(gameList.rows)
+            return
+        }
+
+        if(id){
+            const cusList = await connection.query(`SELECT * FROM rentals WHERE "customerId" = $1`, [id])
+            res.send(cusList.rows)
+            return
+        }
+
+        const {rows} = await connection.query(`SELECT * FROM rentals`)
+
+        res.send(rows)
+
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+
+
+}
+
 export async function CreateRental (req, res) {
 
     const rental = req.body
@@ -100,6 +129,32 @@ export async function ReturnRental (req, res) {
 
 
        
+    } catch (error) {
+        res.status(400).send(error.message)
+    }
+}
+
+export async function DeleteRental (req, res) {
+    const id = req.params.id
+
+    try {
+        
+        const rental = await connection.query(`SELECT * FROM rentals WHERE id = $1`, [id])
+
+        if(!rental.rows[0]){
+            res.sendStatus(404)
+            return
+        }
+
+        if(!rental.rows[0].returnDate){
+            res.sendStatus(400)
+            return
+        }
+
+        await connection.query(`DELETE FROM rentals WHERE id = $1`, [id])
+
+        res.sendStatus(200)
+
     } catch (error) {
         res.status(400).send(error.message)
     }
