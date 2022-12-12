@@ -50,10 +50,40 @@ export async function CustomerCreate(req, res) {
 }
 
 export async function CustomerGet(req, res) {
+
+    
+
+    const cpf = req.query.cpf
+
     try {
+
         const {rows} = await connection.query(`SELECT * FROM customers`)
         res.send(rows)
     } catch (error) {
         res.send(error.message)
     }
+}
+
+export async function  CustomerGetId(req, res){
+    
+    const id = req.params.id
+
+    if(id){
+        try {
+            const pesqId = await connection.query(`SELECT * FROM customers WHERE id = $1`, [id])
+            if(pesqId.rows[0]){
+            res.send(pesqId.rows)
+            return
+        }
+        } catch (error) {
+            res.status(404).send(error.message)
+            return
+        }
+        
+    }
+
+    
+
+    res.sendStatus(404)
+    
 }
