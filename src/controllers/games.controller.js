@@ -41,4 +41,26 @@ export async function CreateGame (req, res) {
     } catch (error) {
         res.send(error.message)
     }
+
+    
+}
+
+    export async function GetGames (req, res) {
+
+        const gameName = req.query.name
+
+        try {
+            const {rows} = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId"=categories.id;`)
+            if(gameName){
+                const filterr = rows.filter((m)=> m.name.toUpperCase().includes(gameName.toUpperCase()))
+                res.send(filterr)
+                return
+            }
+            
+            res.send(rows)
+            
+            
+        } catch (error) {
+            res.status(400).send(error.message)
+        }
 }
