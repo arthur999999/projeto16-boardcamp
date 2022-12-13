@@ -1,6 +1,7 @@
 import {connection} from "../database/db.js";
 import joi from "joi";
 import dayjs from "dayjs";
+import dayOfYear from "dayjs";
 
 
 
@@ -121,7 +122,18 @@ export async function ReturnRental (req, res) {
 
         const dateNow = `${dayjs().year()}-${dayjs().month()+ 1}-${dayjs().date()}`
 
-        await connection.query(`UPDATE rentals SET "returnDate" = $1 WHERE id = $2`, [dateNow, id])
+        
+        const dateRent = dayjs(rental.rows[0].rentDate).format('YYYY-MM-DD')
+
+        let calcDay = ((new Date(dateNow) - new Date(dateRent)) / 86400000) - rental.rows[0].daysRented
+
+        if( calcDay < 0){
+            calcDay = 0
+        }
+
+        let delayFee = calcDay * (rental.rows[0].originalPrice / rental.rows[0].daysRented)
+
+        await connection.query(`UPDATE rentals SET "returnDate" = $1, "delayFee" = $2 WHERE id = $3`, [dateNow, delayFee, id])
 
         res.sendStatus(200)
 
